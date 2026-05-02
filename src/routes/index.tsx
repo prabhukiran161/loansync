@@ -1,9 +1,14 @@
+import { MobileShell } from "@/components/MobileShell";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
-  component: RootComponent,
+  component: Home,
 });
 
-function RootComponent() {
-  return <h2>Home</h2>;
+function Home() {
+  return (
+    <MobileShell>
+      <h2>Home</h2>
+    </MobileShell>
+  );
 }
