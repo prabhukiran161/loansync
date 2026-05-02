@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import { NavBar } from "@ui/NavBar";
+import { NavBar } from "@/components/NavBar";
 import { NAV_ITEMS } from "@constants/navItems";
-import { NavItem } from "@ui/NavItem";
+import { NavItem } from "@/components/NavItem";
 
 export function MobileShell({
   children,
