@@ -36,6 +36,7 @@ export type Notification = {
   title: string;
   desc: string;
   time: string;
+  isRead: boolean;
 };
 
 export const currentUser = {
@@ -141,6 +142,7 @@ export const notifications: Notification[] = [
     title: "Payment verified",
     desc: "Your ₹20,000 payment was approved",
     time: "2h ago",
+    isRead: true,
   },
   {
     id: "n2",
@@ -148,6 +150,23 @@ export const notifications: Notification[] = [
     title: "New payment added",
     desc: "Priya added ₹25,000 to Family Gold Loan",
     time: "5h ago",
+    isRead: false,
+  },
+  {
+    id: "n3",
+    type: "rejected",
+    title: "Payment rejected",
+    desc: "Rohan's ₹18,000 was rejected",
+    time: "1d ago",
+    isRead: true,
+  },
+  {
+    id: "n4",
+    type: "invite",
+    title: "Loan invite",
+    desc: "You were invited to 'Wedding Loan'",
+    time: "3d ago",
+    isRead: false,
   },
 ];
 

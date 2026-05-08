@@ -38,7 +38,7 @@ function Dashboard() {
           </div>
         </div>
         <Link
-          to="/"
+          to="/notifications"
           className="relative w-10 h-10 rounded-full bg-card shadow-sm  flex items-center justify-center cursor-pointer"
         >
           <Bell size={20} className="text-foreground" />
