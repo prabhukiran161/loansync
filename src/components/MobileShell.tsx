@@ -11,9 +11,11 @@ export function MobileShell({
   hideNav?: boolean;
 }) {
   return (
-    <div className="max-w-md mx-auto min-h-screen flex flex-col text-foreground shadow-2xl relative overflow-hidden bg-background">
+    <div className="max-w-md mx-auto h-dvh flex flex-col text-foreground shadow-lg relative overflow-hidden bg-background">
       {/* Main Content Area */}
-      <main className={`flex-1 overflow-y-auto ${hideNav ? "" : "pb-20"}`}>
+      <main
+        className={`flex-1 overflow-y-auto no-scrollbar ${hideNav ? "" : "pb-20"}`}
+      >
         {children}
       </main>
       {/* Bottom Navigation Bar */}
