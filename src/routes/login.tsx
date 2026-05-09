@@ -1,8 +1,9 @@
+import { Field } from "@/components/Field";
 import { MobileShell } from "@/components/MobileShell";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Coins } from "lucide-react";
-import { Field } from "@/components/Field";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/Logo";
+import { FooterLink } from "@/components/FooterLink";
 
 export const Route = createFileRoute("/login")({
   component: Login,
@@ -15,28 +16,41 @@ function Login() {
     navigate({ to: "/" });
   };
   return (
-    <MobileShell hideNav={true}>
-      {/* Header Section */}
-      <div className="pt-16 px-6 flex flex-col items-center">
-        <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center text-primary-foreground shadow-lg">
-          <Coins size={28} />
-        </div>
-        <h1 className="text-2xl font-bold mt-5">Welcome Back</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Sign in to track your Loans
-        </p>
+    <MobileShell hideNav>
+      <div className="flex flex-col min-h-full">
+        {/* Header Section */}
+        <Logo
+          imgSrc="/logo.png"
+          imgAlt="LoanSync Logo"
+          title="Welcome Back"
+          tagline="Sign in to track and manage your shared loans securely."
+        />
+        {/* Form Section */}
+        <form onSubmit={handleLogin} className="mt-12 px-6 space-y-5">
+          <Field
+            label="Mobile Number"
+            type="tel"
+            placeholder="+91 98765 43210"
+          />
+          <Field label="Password" type="password" placeholder="••••••••" />
+          <div className="flex justify-end mt-1">
+            <span className="text-[13px] font-medium text-primary cursor-pointer hover:underline">
+              Forgot Password?
+            </span>
+          </div>
+          <Button
+            type="submit"
+            className="w-full rounded-[16px] h-14 text-[16px] font-semibold mt-4 shadow-sm active:scale-[0.98] transition-all"
+          >
+            Login
+          </Button>
+        </form>
+        <FooterLink
+          to="/register"
+          preText="Don't have an account?"
+          postText="Register here"
+        />
       </div>
-      {/* Form Section */}
-      <form onSubmit={handleLogin} className="mt-10 px-6 space-y-4">
-        <Field label="Mobile Number" type="tel" placeholder="+91 98765 43210" />
-        <Field label="Password" type="password" placeholder="**********" />
-        <Button
-          type="submit"
-          className="w-full rounded-xl h-12 text-md mt-2 shadow-sm"
-        >
-          Login
-        </Button>
-      </form>
     </MobileShell>
   );
 }
