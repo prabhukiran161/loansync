@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LedgerRouteImport } from './routes/ledger'
 import { Route as IndexRouteImport } from './routes/index'
 
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NotificationsRoute = NotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
@@ -40,12 +46,14 @@ export interface FileRoutesByFullPath {
   '/ledger': typeof LedgerRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
+  '/profile': typeof ProfileRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ledger': typeof LedgerRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
+  '/profile': typeof ProfileRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,14 @@ export interface FileRoutesById {
   '/ledger': typeof LedgerRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
+  '/profile': typeof ProfileRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/ledger' | '/login' | '/notifications'
+  fullPaths: '/' | '/ledger' | '/login' | '/notifications' | '/profile'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ledger' | '/login' | '/notifications'
-  id: '__root__' | '/' | '/ledger' | '/login' | '/notifications'
+  to: '/' | '/ledger' | '/login' | '/notifications' | '/profile'
+  id: '__root__' | '/' | '/ledger' | '/login' | '/notifications' | '/profile'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,10 +76,18 @@ export interface RootRouteChildren {
   LedgerRoute: typeof LedgerRoute
   LoginRoute: typeof LoginRoute
   NotificationsRoute: typeof NotificationsRoute
+  ProfileRoute: typeof ProfileRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/notifications': {
       id: '/notifications'
       path: '/notifications'
@@ -107,6 +124,7 @@ const rootRouteChildren: RootRouteChildren = {
   LedgerRoute: LedgerRoute,
   LoginRoute: LoginRoute,
   NotificationsRoute: NotificationsRoute,
+  ProfileRoute: ProfileRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
