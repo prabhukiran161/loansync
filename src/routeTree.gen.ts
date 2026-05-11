@@ -15,6 +15,9 @@ import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LedgerRouteImport } from './routes/ledger'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LoansIndexRouteImport } from './routes/loans/index'
+import { Route as LoansCreateRouteImport } from './routes/loans/create'
+import { Route as LoansLoanIdIndexRouteImport } from './routes/loans/$loanId/index'
 
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
@@ -46,6 +49,21 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoansIndexRoute = LoansIndexRouteImport.update({
+  id: '/loans/',
+  path: '/loans/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoansCreateRoute = LoansCreateRouteImport.update({
+  id: '/loans/create',
+  path: '/loans/create',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoansLoanIdIndexRoute = LoansLoanIdIndexRouteImport.update({
+  id: '/loans/$loanId/',
+  path: '/loans/$loanId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +72,9 @@ export interface FileRoutesByFullPath {
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/loans/create': typeof LoansCreateRoute
+  '/loans/': typeof LoansIndexRoute
+  '/loans/$loanId/': typeof LoansLoanIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +83,9 @@ export interface FileRoutesByTo {
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/loans/create': typeof LoansCreateRoute
+  '/loans': typeof LoansIndexRoute
+  '/loans/$loanId': typeof LoansLoanIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +95,9 @@ export interface FileRoutesById {
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/loans/create': typeof LoansCreateRoute
+  '/loans/': typeof LoansIndexRoute
+  '/loans/$loanId/': typeof LoansLoanIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,8 +108,20 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/profile'
     | '/register'
+    | '/loans/create'
+    | '/loans/'
+    | '/loans/$loanId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ledger' | '/login' | '/notifications' | '/profile' | '/register'
+  to:
+    | '/'
+    | '/ledger'
+    | '/login'
+    | '/notifications'
+    | '/profile'
+    | '/register'
+    | '/loans/create'
+    | '/loans'
+    | '/loans/$loanId'
   id:
     | '__root__'
     | '/'
@@ -91,6 +130,9 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/profile'
     | '/register'
+    | '/loans/create'
+    | '/loans/'
+    | '/loans/$loanId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -100,6 +142,9 @@ export interface RootRouteChildren {
   NotificationsRoute: typeof NotificationsRoute
   ProfileRoute: typeof ProfileRoute
   RegisterRoute: typeof RegisterRoute
+  LoansCreateRoute: typeof LoansCreateRoute
+  LoansIndexRoute: typeof LoansIndexRoute
+  LoansLoanIdIndexRoute: typeof LoansLoanIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -146,6 +191,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/loans/': {
+      id: '/loans/'
+      path: '/loans'
+      fullPath: '/loans/'
+      preLoaderRoute: typeof LoansIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/loans/create': {
+      id: '/loans/create'
+      path: '/loans/create'
+      fullPath: '/loans/create'
+      preLoaderRoute: typeof LoansCreateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/loans/$loanId/': {
+      id: '/loans/$loanId/'
+      path: '/loans/$loanId'
+      fullPath: '/loans/$loanId/'
+      preLoaderRoute: typeof LoansLoanIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -156,6 +222,9 @@ const rootRouteChildren: RootRouteChildren = {
   NotificationsRoute: NotificationsRoute,
   ProfileRoute: ProfileRoute,
   RegisterRoute: RegisterRoute,
+  LoansCreateRoute: LoansCreateRoute,
+  LoansIndexRoute: LoansIndexRoute,
+  LoansLoanIdIndexRoute: LoansLoanIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
