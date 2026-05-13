@@ -104,15 +104,12 @@ function Dashboard() {
       <div className="px-5 mt-6">
         <div className="flex justify-between items-center mb-3">
           <p className="font-semibold">Your Loans</p>
-          <p className="text-xs text-primary">View all</p>
+          <Link to="/loans" className="text-xs text-primary hover:underline">
+            View all
+          </Link>
         </div>
         {loans.map((loan, index) => (
-          <YourLoans
-            key={index}
-            name={loan.name}
-            remaining={loan.remaining}
-            participantCount={loan.participants.length}
-          />
+          <YourLoans key={index} loan={loan} />
         ))}
       </div>
     </MobileShell>

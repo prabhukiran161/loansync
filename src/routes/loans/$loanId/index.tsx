@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { loans } from "@/lib/mockData";
 import { LoanNotFound } from "@/components/LoanNotFound";
-import { TotalOutstandingCard } from "@/components/TotalOutstandingCard";
+import { RemainingCard } from "@/components/RemainingCard";
 import { QUICK_ACTIONS } from "@/constants/quickActions";
 import { QuickAction } from "@/components/QuickAction";
 import { Participants } from "@/components/Participants";
@@ -28,7 +28,7 @@ function LoanDetail() {
       <div className="flex flex-col min-h-full pb-8">
         <ScreenHeader title={loan.name} backTo="/loans" />
         <div className="px-5 mt-2 space-y-5">
-          <TotalOutstandingCard loan={loan} percent={percent} />
+          <RemainingCard loan={loan} percent={percent} />
           <div className="grid grid-cols-3 gap-3">
             {QUICK_ACTIONS.map((action, index) => (
               <QuickAction
