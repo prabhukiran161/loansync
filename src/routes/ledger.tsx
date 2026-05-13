@@ -22,14 +22,7 @@ function Ledger() {
         ) : (
           <div className="px-5 mt-2 pb-6 flex flex-col gap-3">
             {transactions.map((transaction) => (
-              <TransactionCard
-                key={transaction.id}
-                userName={transaction.userName}
-                date={transaction.date}
-                amount={transaction.amount}
-                note={transaction.note}
-                status={transaction.status}
-              />
+              <TransactionCard key={transaction.id} tx={transaction} />
             ))}
           </div>
         )}

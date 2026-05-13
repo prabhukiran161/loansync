@@ -10,7 +10,7 @@ export const StatusBadge = ({
       return (
         <Badge
           variant="secondary"
-          className="bg-emerald-500/15 text-emerald-700 hover:bg-emerald-500/25 border-none shadow-none font-semibold"
+          className="bg-emerald-500/15 text-emerald-700 border-none shadow-none font-semibold"
         >
           Verified
         </Badge>
@@ -19,7 +19,7 @@ export const StatusBadge = ({
       return (
         <Badge
           variant="secondary"
-          className="bg-amber-500/15 text-amber-700 hover:bg-amber-500/25 border-none shadow-none font-semibold"
+          className="bg-amber-500/15 text-amber-700 border-none shadow-none font-semibold"
         >
           Pending
         </Badge>
@@ -28,7 +28,7 @@ export const StatusBadge = ({
       return (
         <Badge
           variant="secondary"
-          className="bg-red-500/15 text-red-700 hover:bg-red-500/25 border-none shadow-none font-semibold"
+          className="bg-red-500/15 text-red-700 border-none shadow-none font-semibold"
         >
           Rejected
         </Badge>
