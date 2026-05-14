@@ -2,23 +2,28 @@ import { MobileShell } from "@/components/MobileShell";
 import { createFileRoute } from "@tanstack/react-router";
 import { ScreenHeader } from "@/components/ScreenHeader";
 import { loans } from "@/lib/mockData";
-import { LoanNotFound } from "@/components/LoanNotFound";
 import { RemainingCard } from "@/components/RemainingCard";
 import { QUICK_ACTIONS } from "@/constants/quickActions";
 import { QuickAction } from "@/components/QuickAction";
 import { Participants } from "@/components/Participants";
 import { SummaryCard } from "@/components/SummaryCard";
+import { SpecificNotFound } from "@/components/SpecificNotFound";
+import { Wallet } from "lucide-react";
 
 export const Route = createFileRoute("/loans/$loanId/")({
   component: LoanDetail,
-  notFoundComponent: LoanNotFound,
+  notFoundComponent: () => (
+    <SpecificNotFound title="Error" icon={Wallet} message="Loan Not Found" />
+  ),
 });
 
 function LoanDetail() {
   const { loanId } = Route.useParams();
   const loan = loans.find((loan) => loan.id === loanId);
   if (!loan) {
-    return <LoanNotFound />;
+    return (
+      <SpecificNotFound title="Error" icon={Wallet} message="Loan Not Found" />
+    );
   }
   const percent = Math.round(
     ((loan.total - loan.remaining) / loan.total) * 100,

@@ -5,7 +5,7 @@ export const QUICK_ACTIONS: {
   label: string;
   icon: LucideIcon;
 }[] = [
-  { to: "/", icon: Plus, label: "Add Payment" },
+  { to: "/add-payment", icon: Plus, label: "Add Payment" },
   { to: "/ledger", icon: ScrollText, label: "Ledger" },
-  { to: "/", icon: TrendingUp, label: "Projection" },
+  { to: "/projection", icon: TrendingUp, label: "Projection" },
 ];

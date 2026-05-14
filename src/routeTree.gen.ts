@@ -10,19 +10,27 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as ProjectionRouteImport } from './routes/projection'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LedgerRouteImport } from './routes/ledger'
+import { Route as AddPaymentRouteImport } from './routes/add-payment'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LoansIndexRouteImport } from './routes/loans/index'
 import { Route as TransactionsTxIdRouteImport } from './routes/transactions/$txId'
 import { Route as LoansCreateRouteImport } from './routes/loans/create'
 import { Route as LoansLoanIdIndexRouteImport } from './routes/loans/$loanId/index'
+import { Route as LoansLoanIdProjectionRouteImport } from './routes/loans/$loanId/projection'
 
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectionRoute = ProjectionRouteImport.update({
+  id: '/projection',
+  path: '/projection',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileRoute = ProfileRouteImport.update({
@@ -43,6 +51,11 @@ const LoginRoute = LoginRouteImport.update({
 const LedgerRoute = LedgerRouteImport.update({
   id: '/ledger',
   path: '/ledger',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AddPaymentRoute = AddPaymentRouteImport.update({
+  id: '/add-payment',
+  path: '/add-payment',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -70,93 +83,119 @@ const LoansLoanIdIndexRoute = LoansLoanIdIndexRouteImport.update({
   path: '/loans/$loanId/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoansLoanIdProjectionRoute = LoansLoanIdProjectionRouteImport.update({
+  id: '/loans/$loanId/projection',
+  path: '/loans/$loanId/projection',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/add-payment': typeof AddPaymentRoute
   '/ledger': typeof LedgerRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
+  '/projection': typeof ProjectionRoute
   '/register': typeof RegisterRoute
   '/loans/create': typeof LoansCreateRoute
   '/transactions/$txId': typeof TransactionsTxIdRoute
   '/loans/': typeof LoansIndexRoute
+  '/loans/$loanId/projection': typeof LoansLoanIdProjectionRoute
   '/loans/$loanId/': typeof LoansLoanIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/add-payment': typeof AddPaymentRoute
   '/ledger': typeof LedgerRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
+  '/projection': typeof ProjectionRoute
   '/register': typeof RegisterRoute
   '/loans/create': typeof LoansCreateRoute
   '/transactions/$txId': typeof TransactionsTxIdRoute
   '/loans': typeof LoansIndexRoute
+  '/loans/$loanId/projection': typeof LoansLoanIdProjectionRoute
   '/loans/$loanId': typeof LoansLoanIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/add-payment': typeof AddPaymentRoute
   '/ledger': typeof LedgerRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
+  '/projection': typeof ProjectionRoute
   '/register': typeof RegisterRoute
   '/loans/create': typeof LoansCreateRoute
   '/transactions/$txId': typeof TransactionsTxIdRoute
   '/loans/': typeof LoansIndexRoute
+  '/loans/$loanId/projection': typeof LoansLoanIdProjectionRoute
   '/loans/$loanId/': typeof LoansLoanIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/add-payment'
     | '/ledger'
     | '/login'
     | '/notifications'
     | '/profile'
+    | '/projection'
     | '/register'
     | '/loans/create'
     | '/transactions/$txId'
     | '/loans/'
+    | '/loans/$loanId/projection'
     | '/loans/$loanId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/add-payment'
     | '/ledger'
     | '/login'
     | '/notifications'
     | '/profile'
+    | '/projection'
     | '/register'
     | '/loans/create'
     | '/transactions/$txId'
     | '/loans'
+    | '/loans/$loanId/projection'
     | '/loans/$loanId'
   id:
     | '__root__'
     | '/'
+    | '/add-payment'
     | '/ledger'
     | '/login'
     | '/notifications'
     | '/profile'
+    | '/projection'
     | '/register'
     | '/loans/create'
     | '/transactions/$txId'
     | '/loans/'
+    | '/loans/$loanId/projection'
     | '/loans/$loanId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AddPaymentRoute: typeof AddPaymentRoute
   LedgerRoute: typeof LedgerRoute
   LoginRoute: typeof LoginRoute
   NotificationsRoute: typeof NotificationsRoute
   ProfileRoute: typeof ProfileRoute
+  ProjectionRoute: typeof ProjectionRoute
   RegisterRoute: typeof RegisterRoute
   LoansCreateRoute: typeof LoansCreateRoute
   TransactionsTxIdRoute: typeof TransactionsTxIdRoute
   LoansIndexRoute: typeof LoansIndexRoute
+  LoansLoanIdProjectionRoute: typeof LoansLoanIdProjectionRoute
   LoansLoanIdIndexRoute: typeof LoansLoanIdIndexRoute
 }
 
@@ -167,6 +206,13 @@ declare module '@tanstack/react-router' {
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projection': {
+      id: '/projection'
+      path: '/projection'
+      fullPath: '/projection'
+      preLoaderRoute: typeof ProjectionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -195,6 +241,13 @@ declare module '@tanstack/react-router' {
       path: '/ledger'
       fullPath: '/ledger'
       preLoaderRoute: typeof LedgerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/add-payment': {
+      id: '/add-payment'
+      path: '/add-payment'
+      fullPath: '/add-payment'
+      preLoaderRoute: typeof AddPaymentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -232,19 +285,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoansLoanIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/loans/$loanId/projection': {
+      id: '/loans/$loanId/projection'
+      path: '/loans/$loanId/projection'
+      fullPath: '/loans/$loanId/projection'
+      preLoaderRoute: typeof LoansLoanIdProjectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AddPaymentRoute: AddPaymentRoute,
   LedgerRoute: LedgerRoute,
   LoginRoute: LoginRoute,
   NotificationsRoute: NotificationsRoute,
   ProfileRoute: ProfileRoute,
+  ProjectionRoute: ProjectionRoute,
   RegisterRoute: RegisterRoute,
   LoansCreateRoute: LoansCreateRoute,
   TransactionsTxIdRoute: TransactionsTxIdRoute,
   LoansIndexRoute: LoansIndexRoute,
+  LoansLoanIdProjectionRoute: LoansLoanIdProjectionRoute,
   LoansLoanIdIndexRoute: LoansLoanIdIndexRoute,
 }
 export const routeTree = rootRouteImport

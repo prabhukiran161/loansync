@@ -66,32 +66,32 @@ export const loans: Loan[] = [
   {
     id: "l2",
     name: "Family Gold Loan",
-    total: 600000,
-    remaining: 410000,
+    total: 235000,
+    remaining: 235000,
     interestRate: 10,
-    durationMonths: 18,
-    startDate: "2025-11-01",
+    durationMonths: 12,
+    startDate: "2026-04-28",
     participants: [
       {
         id: "p1",
         name: "Aarav Sharma",
         mobile: "+91 98765 43210",
-        contribution: 70000,
-        pending: 130000,
+        contribution: 0,
+        pending: 200000,
       },
       {
         id: "p2",
         name: "Priya Sharma",
         mobile: "+91 91234 56780",
-        contribution: 60000,
-        pending: 140000,
+        contribution: 0,
+        pending: 200000,
       },
       {
         id: "p3",
         name: "Rohan Sharma",
         mobile: "+91 99887 76655",
-        contribution: 60000,
-        pending: 140000,
+        contribution: 0,
+        pending: 200000,
       },
     ],
   },
@@ -171,3 +171,23 @@ export const notifications: Notification[] = [
 ];
 
 export const fmt = (n: number) => "₹" + n.toLocaleString("en-IN");
+
+export function projectionFor(loan: Loan) {
+  const monthly = loan.total / loan.durationMonths;
+  const r = loan.interestRate / 100 / 12;
+  let remaining = loan.total;
+  const rows = [];
+  for (let i = 1; i <= loan.durationMonths; i++) {
+    const interest = remaining * r;
+    const principal = monthly;
+    remaining = Math.max(0, remaining - principal);
+    rows.push({
+      month: i,
+      payment: monthly + interest,
+      interest,
+      principal,
+      remaining,
+    });
+  }
+  return rows;
+}
