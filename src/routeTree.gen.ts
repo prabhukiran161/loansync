@@ -22,6 +22,7 @@ import { Route as TransactionsTxIdRouteImport } from './routes/transactions/$txI
 import { Route as LoansCreateRouteImport } from './routes/loans/create'
 import { Route as LoansLoanIdIndexRouteImport } from './routes/loans/$loanId/index'
 import { Route as LoansLoanIdProjectionRouteImport } from './routes/loans/$loanId/projection'
+import { Route as LoansLoanIdAddPaymentRouteImport } from './routes/loans/$loanId/add-payment'
 
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
@@ -88,6 +89,11 @@ const LoansLoanIdProjectionRoute = LoansLoanIdProjectionRouteImport.update({
   path: '/loans/$loanId/projection',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoansLoanIdAddPaymentRoute = LoansLoanIdAddPaymentRouteImport.update({
+  id: '/loans/$loanId/add-payment',
+  path: '/loans/$loanId/add-payment',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/loans/create': typeof LoansCreateRoute
   '/transactions/$txId': typeof TransactionsTxIdRoute
   '/loans/': typeof LoansIndexRoute
+  '/loans/$loanId/add-payment': typeof LoansLoanIdAddPaymentRoute
   '/loans/$loanId/projection': typeof LoansLoanIdProjectionRoute
   '/loans/$loanId/': typeof LoansLoanIdIndexRoute
 }
@@ -116,6 +123,7 @@ export interface FileRoutesByTo {
   '/loans/create': typeof LoansCreateRoute
   '/transactions/$txId': typeof TransactionsTxIdRoute
   '/loans': typeof LoansIndexRoute
+  '/loans/$loanId/add-payment': typeof LoansLoanIdAddPaymentRoute
   '/loans/$loanId/projection': typeof LoansLoanIdProjectionRoute
   '/loans/$loanId': typeof LoansLoanIdIndexRoute
 }
@@ -132,6 +140,7 @@ export interface FileRoutesById {
   '/loans/create': typeof LoansCreateRoute
   '/transactions/$txId': typeof TransactionsTxIdRoute
   '/loans/': typeof LoansIndexRoute
+  '/loans/$loanId/add-payment': typeof LoansLoanIdAddPaymentRoute
   '/loans/$loanId/projection': typeof LoansLoanIdProjectionRoute
   '/loans/$loanId/': typeof LoansLoanIdIndexRoute
 }
@@ -149,6 +158,7 @@ export interface FileRouteTypes {
     | '/loans/create'
     | '/transactions/$txId'
     | '/loans/'
+    | '/loans/$loanId/add-payment'
     | '/loans/$loanId/projection'
     | '/loans/$loanId/'
   fileRoutesByTo: FileRoutesByTo
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
     | '/loans/create'
     | '/transactions/$txId'
     | '/loans'
+    | '/loans/$loanId/add-payment'
     | '/loans/$loanId/projection'
     | '/loans/$loanId'
   id:
@@ -179,6 +190,7 @@ export interface FileRouteTypes {
     | '/loans/create'
     | '/transactions/$txId'
     | '/loans/'
+    | '/loans/$loanId/add-payment'
     | '/loans/$loanId/projection'
     | '/loans/$loanId/'
   fileRoutesById: FileRoutesById
@@ -195,6 +207,7 @@ export interface RootRouteChildren {
   LoansCreateRoute: typeof LoansCreateRoute
   TransactionsTxIdRoute: typeof TransactionsTxIdRoute
   LoansIndexRoute: typeof LoansIndexRoute
+  LoansLoanIdAddPaymentRoute: typeof LoansLoanIdAddPaymentRoute
   LoansLoanIdProjectionRoute: typeof LoansLoanIdProjectionRoute
   LoansLoanIdIndexRoute: typeof LoansLoanIdIndexRoute
 }
@@ -292,6 +305,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoansLoanIdProjectionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/loans/$loanId/add-payment': {
+      id: '/loans/$loanId/add-payment'
+      path: '/loans/$loanId/add-payment'
+      fullPath: '/loans/$loanId/add-payment'
+      preLoaderRoute: typeof LoansLoanIdAddPaymentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -307,6 +327,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoansCreateRoute: LoansCreateRoute,
   TransactionsTxIdRoute: TransactionsTxIdRoute,
   LoansIndexRoute: LoansIndexRoute,
+  LoansLoanIdAddPaymentRoute: LoansLoanIdAddPaymentRoute,
   LoansLoanIdProjectionRoute: LoansLoanIdProjectionRoute,
   LoansLoanIdIndexRoute: LoansLoanIdIndexRoute,
 }
