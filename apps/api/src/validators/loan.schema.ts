@@ -23,4 +23,14 @@ export const createLoanSchema = z.object({
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Start date must be in YYYY-MM-DD format"),
 });
 
+export const updateLoanSchema = z.object({
+  loan_name: z
+    .string()
+    .min(3, "Loan name must be at least 3 characters")
+    .max(100)
+    .optional(),
+  status: z.enum(["active", "completed", "defaulted"]).optional(),
+});
+
 export type CreateLoanInput = z.infer<typeof createLoanSchema>;
+export type UpdateLoanInput = z.infer<typeof updateLoanSchema>;

@@ -1,5 +1,8 @@
 import type { Request } from "express";
-import type { CreateLoanInput } from "../validators/loan.schema";
+import type {
+  CreateLoanInput,
+  UpdateLoanInput,
+} from "../validators/loan.schema";
 import { Loan, LoanParticipant } from "@loansync/db";
 
 export const createLoanRequestDTO = (req: Request): CreateLoanInput => {
@@ -50,5 +53,13 @@ export const participantResponseDTO = (participant: LoanParticipant) => {
     principalShareInPaise: participant.principal_share_in_paise.toString(),
     remainingBalanceInPaise: participant.remaining_balance_in_paise.toString(),
     liabilityPercentageBps: participant.liability_percentage_bps,
+  };
+};
+
+export const updateLoanRequestDTO = (req: Request): UpdateLoanInput => {
+  const body = req.body || {};
+  return {
+    loan_name: body.loanName,
+    status: body.status,
   };
 };

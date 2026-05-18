@@ -58,3 +58,29 @@ export const getLoanById = async (id: number) => {
     include: { participants: true },
   });
 };
+
+export const getLoansByUserId = async (userId: number) => {
+  return await db.loan.findMany({
+    where: {
+      participants: {
+        some: { user_id: userId },
+      },
+    },
+    include: { participants: true },
+    orderBy: { created_at: "desc" },
+  });
+};
+
+export const updateLoan = async (id: number, data: Prisma.LoanUpdateInput) => {
+  return await db.loan.update({
+    where: { id },
+    data,
+    include: { participants: true, projections: true },
+  });
+};
+
+export const deleteLoan = async (id: number) => {
+  return await db.loan.delete({
+    where: { id },
+  });
+};
