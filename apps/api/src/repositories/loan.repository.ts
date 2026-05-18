@@ -45,7 +45,7 @@ export const createLoanWithParticipantAndProjections = async (
       data: finalProjections,
     });
 
-    return await tx.loan.findUnique({
+    return await tx.loan.findUniqueOrThrow({
       where: { id: loan.id },
       include: { participants: true, projections: true },
     });

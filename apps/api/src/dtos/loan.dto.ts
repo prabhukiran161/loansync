@@ -5,11 +5,11 @@ import { Loan, LoanParticipant } from "@loansync/db";
 export const createLoanRequestDTO = (req: Request): CreateLoanInput => {
   const body = req.body || {};
   return {
-    loan_name: body.loan_name,
-    principal_in_paise: Number(body.principal_in_paise),
-    interest_rate_bps: Number(body.interest_rate_bps),
-    duration_months: Number(body.duration_months),
-    start_date: body.start_date,
+    loan_name: body.loanName,
+    principal_in_paise: Number(body.principalInPaise),
+    interest_rate_bps: Number(body.interestRateBps),
+    duration_months: Number(body.durationMonths),
+    start_date: body.startDate,
   };
 };
 
