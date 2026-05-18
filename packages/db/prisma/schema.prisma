@@ -6,6 +6,180 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id                  Int               @id @default(autoincrement())
+  userName            String            @unique @db.VarChar
+  password            String
+  created_at          DateTime          @default(now()) @db.Timestamp(6)
+  updated_at          DateTime?         @updatedAt @db.Timestamp(6)
+  deleted_at          DateTime?         @db.Timestamp(6)
+  loansCreated        Loan[]            @relation("LoansCreated")
+  invitationsSent     LoanInvitation[]  @relation("InvitationsSent")
+  invitationsReceived LoanInvitation[]  @relation("InvitationsReceived")
+  loanParticipations  LoanParticipant[]
+  notifications       Notification[]
+}
+
+model Loan {
+  id                         Int               @id @default(autoincrement())
+  created_by_user_id         Int
+  loan_name                  String?           @db.VarChar
+  principal_in_paise         BigInt
+  interest_rate_bps          Int
+  duration_months            Int
+  start_date                 DateTime          @db.Date
+  end_date                   DateTime?         @db.Date
+  total_paid_in_paise        BigInt            @default(0)
+  remaining_balance_in_paise BigInt
+  status                     LoanStatus
+  created_at                 DateTime          @default(now()) @db.Timestamp(6)
+  updated_at                 DateTime?         @updatedAt @db.Timestamp(6)
+  deleted_at                 DateTime?         @db.Timestamp(6)
+  creator                    User              @relation("LoansCreated", fields: [created_by_user_id], references: [id])
+  events                     LoanEvent[]
+  invitations                LoanInvitation[]
+  participants               LoanParticipant[]
+  projections                LoanProjection[]
+  transactions               Transaction[]
+}
+
+model LoanInvitation {
+  id                 Int              @id @default(autoincrement())
+  loan_id            Int
+  invited_by_user_id Int
+  invited_user_id    Int
+  status             InvitationStatus
+  created_at         DateTime         @default(now()) @db.Timestamp(6)
+  responded_at       DateTime?        @db.Timestamp(6)
+  invitedBy          User             @relation("InvitationsSent", fields: [invited_by_user_id], references: [id])
+  invitedUser        User             @relation("InvitationsReceived", fields: [invited_user_id], references: [id])
+  loan               Loan             @relation(fields: [loan_id], references: [id])
+
+  @@unique([loan_id, invited_user_id])
+}
+
+model LoanParticipant {
+  id                         Int                       @id @default(autoincrement())
+  loan_id                    Int
+  user_id                    Int
+  role                       ParticipantRole
+  principal_share_in_paise   BigInt
+  remaining_balance_in_paise BigInt
+  liability_percentage_bps   Int
+  total_paid_in_paise        BigInt                    @default(0)
+  interest_paid_in_paise     BigInt                    @default(0)
+  principal_paid_in_paise    BigInt                    @default(0)
+  penalty_paid_in_paise      BigInt                    @default(0)
+  joined_at                  DateTime                  @default(now()) @db.Timestamp(6)
+  participant_state          ParticipantLoanState
+  created_at                 DateTime                  @default(now()) @db.Timestamp(6)
+  updated_at                 DateTime?                 @updatedAt @db.Timestamp(6)
+  deleted_at                 DateTime?                 @db.Timestamp(6)
+  events                     LoanEvent[]
+  loan                       Loan                      @relation(fields: [loan_id], references: [id])
+  user                       User                      @relation(fields: [user_id], references: [id])
+  projections                LoanProjection[]
+  transactions               Transaction[]
+  verifications              TransactionVerification[]
+
+  @@unique([loan_id, user_id])
+}
+
+model LoanProjection {
+  id                           Int                  @id @default(autoincrement())
+  loan_id                      Int
+  loan_participant_id          Int
+  month_number                 Int
+  expected_payment_in_paise    BigInt
+  actual_payment_in_paise      BigInt               @default(0)
+  interest_component_in_paise  BigInt
+  principal_component_in_paise BigInt
+  penalty_component_in_paise   BigInt               @default(0)
+  remaining_balance_in_paise   BigInt
+  projected_due_date           DateTime             @db.Date
+  status                       ProjectionStatus
+  created_at                   DateTime             @default(now()) @db.Timestamp(6)
+  updated_at                   DateTime?            @updatedAt @db.Timestamp(6)
+  loan                         Loan                 @relation(fields: [loan_id], references: [id])
+  participant                  LoanParticipant      @relation(fields: [loan_participant_id], references: [id])
+  revisions                    ProjectionRevision[]
+
+  @@unique([loan_participant_id, month_number])
+}
+
+model Transaction {
+  id                           Int                       @id @default(autoincrement())
+  loan_id                      Int
+  loan_participant_id          Int
+  amount_in_paise              BigInt
+  principal_component_in_paise BigInt                    @default(0)
+  interest_component_in_paise  BigInt                    @default(0)
+  penalty_component_in_paise   BigInt                    @default(0)
+  transaction_date             DateTime                  @db.Date
+  status                       TransactionStatus
+  proof_file_url               String?                   @db.VarChar
+  proof_file_type              String?                   @db.VarChar
+  proof_uploaded_at            DateTime?                 @db.Timestamp(6)
+  notes                        String?
+  created_at                   DateTime                  @default(now()) @db.Timestamp(6)
+  updated_at                   DateTime?                 @updatedAt @db.Timestamp(6)
+  deleted_at                   DateTime?                 @db.Timestamp(6)
+  loan                         Loan                      @relation(fields: [loan_id], references: [id])
+  participant                  LoanParticipant           @relation(fields: [loan_participant_id], references: [id])
+  verifications                TransactionVerification[]
+
+  @@index([loan_id, transaction_date])
+}
+
+model TransactionVerification {
+  id                              Int               @id @default(autoincrement())
+  transaction_id                  Int
+  verified_by_loan_participant_id Int
+  status                          TransactionStatus
+  remarks                         String?
+  verified_at                     DateTime          @default(now()) @db.Timestamp(6)
+  transaction                     Transaction       @relation(fields: [transaction_id], references: [id])
+  verifier                        LoanParticipant   @relation(fields: [verified_by_loan_participant_id], references: [id])
+
+  @@unique([transaction_id, verified_by_loan_participant_id])
+}
+
+model Notification {
+  id                     Int              @id @default(autoincrement())
+  user_id                Int
+  type                   NotificationType
+  title                  String           @db.VarChar
+  message                String
+  is_read                Boolean          @default(false)
+  related_loan_id        Int?
+  related_transaction_id Int?
+  created_at             DateTime         @default(now()) @db.Timestamp(6)
+  user                   User             @relation(fields: [user_id], references: [id])
+}
+
+model LoanEvent {
+  id                  Int              @id @default(autoincrement())
+  loan_id             Int
+  loan_participant_id Int?
+  event_type          LoanEventType
+  event_data          Json?
+  created_at          DateTime         @default(now()) @db.Timestamp(6)
+  loan                Loan             @relation(fields: [loan_id], references: [id])
+  participant         LoanParticipant? @relation(fields: [loan_participant_id], references: [id])
+}
+
+model ProjectionRevision {
+  id                             Int            @id @default(autoincrement())
+  loan_projection_id             Int
+  old_expected_payment_in_paise  BigInt?
+  new_expected_payment_in_paise  BigInt?
+  old_remaining_balance_in_paise BigInt?
+  new_remaining_balance_in_paise BigInt?
+  revision_reason                String?        @db.VarChar
+  revised_at                     DateTime       @default(now()) @db.Timestamp(6)
+  projection                     LoanProjection @relation(fields: [loan_projection_id], references: [id])
+}
+
 enum LoanStatus {
   active
   completed
@@ -68,188 +242,4 @@ enum LoanEventType {
   projection_recalculated
   loan_completed
   loan_defaulted
-}
-
-model User {
-  id         Int       @id @default(autoincrement())
-  userName   String    @unique @db.VarChar
-  password   String    @db.Text
-  created_at DateTime  @default(now()) @db.Timestamp()
-  updated_at DateTime? @updatedAt @db.Timestamp()
-  deleted_at DateTime? @db.Timestamp()
-
-  loansCreated         Loan[]                 @relation("LoansCreated")
-  invitationsSent      LoanInvitation[]       @relation("InvitationsSent")
-  invitationsReceived  LoanInvitation[]       @relation("InvitationsReceived")
-  loanParticipations   LoanParticipant[]
-  notifications        Notification[]
-}
-
-model Loan {
-  id                         Int       @id @default(autoincrement())
-  created_by_user_id         Int
-  loan_name                  String?   @db.VarChar
-  principal_in_paise         BigInt
-  interest_rate_bps          Int
-  duration_months            Int
-  start_date                 DateTime  @db.Date
-  end_date                   DateTime? @db.Date
-  total_paid_in_paise        BigInt    @default(0)
-  remaining_balance_in_paise BigInt
-  status                     LoanStatus
-  created_at                 DateTime  @default(now()) @db.Timestamp()
-  updated_at                 DateTime? @updatedAt @db.Timestamp()
-  deleted_at                 DateTime? @db.Timestamp()
-
-  creator      User              @relation("LoansCreated", fields: [created_by_user_id], references: [id])
-  invitations  LoanInvitation[]
-  participants LoanParticipant[]
-  projections  LoanProjection[]
-  transactions Transaction[]
-  events       LoanEvent[]
-}
-
-model LoanInvitation {
-  id                 Int       @id @default(autoincrement())
-  loan_id            Int
-  invited_by_user_id Int
-  invited_user_id    Int
-  status             InvitationStatus
-  created_at         DateTime  @default(now()) @db.Timestamp()
-  responded_at       DateTime? @db.Timestamp()
-
-  loan          Loan @relation(fields: [loan_id], references: [id])
-  invitedBy     User @relation("InvitationsSent", fields: [invited_by_user_id], references: [id])
-  invitedUser   User @relation("InvitationsReceived", fields: [invited_user_id], references: [id])
-
-  @@unique([loan_id, invited_user_id])
-}
-
-model LoanParticipant {
-  id                         Int                  @id @default(autoincrement())
-  loan_id                    Int
-  user_id                    Int
-  role                       ParticipantRole
-  principal_share_in_paise   BigInt
-  remaining_balance_in_paise BigInt
-  liability_percentage_bps   Int
-  total_paid_in_paise        BigInt               @default(0)
-  interest_paid_in_paise     BigInt               @default(0)
-  principal_paid_in_paise    BigInt               @default(0)
-  penalty_paid_in_paise      BigInt               @default(0)
-  joined_at                  DateTime             @default(now()) @db.Timestamp()
-  participant_state          ParticipantLoanState
-  created_at                 DateTime             @default(now()) @db.Timestamp()
-  updated_at                 DateTime?            @updatedAt @db.Timestamp()
-  deleted_at                 DateTime?            @db.Timestamp()
-
-  loan           Loan                      @relation(fields: [loan_id], references: [id])
-  user           User                      @relation(fields: [user_id], references: [id])
-  projections    LoanProjection[]
-  transactions   Transaction[]
-  verifications  TransactionVerification[]
-  events         LoanEvent[]
-
-  @@unique([loan_id, user_id])
-}
-
-model LoanProjection {
-  id                           Int              @id @default(autoincrement())
-  loan_id                      Int
-  loan_participant_id          Int
-  month_number                 Int
-  expected_payment_in_paise    BigInt
-  actual_payment_in_paise      BigInt           @default(0)
-  interest_component_in_paise  BigInt
-  principal_component_in_paise BigInt
-  penalty_component_in_paise   BigInt           @default(0)
-  remaining_balance_in_paise   BigInt
-  projected_due_date           DateTime         @db.Date
-  status                       ProjectionStatus
-  created_at                   DateTime         @default(now()) @db.Timestamp()
-  updated_at                   DateTime?        @updatedAt @db.Timestamp()
-
-  participant LoanParticipant      @relation(fields: [loan_participant_id], references: [id])
-  loan        Loan                 @relation(fields: [loan_id], references: [id])
-  revisions   ProjectionRevision[]
-
-  @@unique([loan_participant_id, month_number])
-}
-
-model Transaction {
-  id                           Int               @id @default(autoincrement())
-  loan_id                      Int
-  loan_participant_id          Int
-  amount_in_paise              BigInt
-  principal_component_in_paise BigInt            @default(0)
-  interest_component_in_paise  BigInt            @default(0)
-  penalty_component_in_paise   BigInt            @default(0)
-  transaction_date             DateTime          @db.Date
-  status                       TransactionStatus
-  proof_file_url               String?           @db.VarChar
-  proof_file_type              String?           @db.VarChar
-  proof_uploaded_at            DateTime?         @db.Timestamp()
-  notes                        String?           @db.Text
-  created_at                   DateTime          @default(now()) @db.Timestamp()
-  updated_at                   DateTime?         @updatedAt @db.Timestamp()
-  deleted_at                   DateTime?         @db.Timestamp()
-
-  loan          Loan                      @relation(fields: [loan_id], references: [id])
-  participant   LoanParticipant           @relation(fields: [loan_participant_id], references: [id])
-  verifications TransactionVerification[]
-
-  @@index([loan_id, transaction_date])
-}
-
-model TransactionVerification {
-  id                              Int               @id @default(autoincrement())
-  transaction_id                  Int
-  verified_by_loan_participant_id Int
-  status                          TransactionStatus
-  remarks                         String?           @db.Text
-  verified_at                     DateTime          @default(now()) @db.Timestamp()
-
-  transaction Transaction     @relation(fields: [transaction_id], references: [id])
-  verifier    LoanParticipant @relation(fields: [verified_by_loan_participant_id], references: [id])
-
-  @@unique([transaction_id, verified_by_loan_participant_id])
-}
-
-model Notification {
-  id                     Int              @id @default(autoincrement())
-  user_id                Int
-  type                   NotificationType
-  title                  String           @db.VarChar
-  message                String           @db.Text
-  is_read                Boolean          @default(false)
-  related_loan_id        Int?
-  related_transaction_id Int?
-  created_at             DateTime         @default(now()) @db.Timestamp()
-
-  user User @relation(fields: [user_id], references: [id])
-}
-
-model LoanEvent {
-  id                  Int           @id @default(autoincrement())
-  loan_id             Int
-  loan_participant_id Int?
-  event_type          LoanEventType
-  event_data          Json?
-  created_at          DateTime      @default(now()) @db.Timestamp()
-
-  loan        Loan             @relation(fields: [loan_id], references: [id])
-  participant LoanParticipant? @relation(fields: [loan_participant_id], references: [id])
-}
-
-model ProjectionRevision {
-  id                                 Int      @id @default(autoincrement())
-  loan_projection_id                 Int
-  old_expected_payment_in_paise      BigInt?
-  new_expected_payment_in_paise      BigInt?
-  old_remaining_balance_in_paise     BigInt?
-  new_remaining_balance_in_paise     BigInt?
-  revision_reason                    String?  @db.VarChar
-  revised_at                         DateTime @default(now()) @db.Timestamp()
-
-  projection LoanProjection @relation(fields: [loan_projection_id], references: [id])
 }
