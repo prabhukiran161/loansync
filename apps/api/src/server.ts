@@ -19,14 +19,19 @@ server.on("connection", (connection) => {
   });
 });
 
+let isShuttingDown = false;
+
 const gracefulShutdown = async (signal: string) => {
+  if (isShuttingDown) {
+    logger.warn("Shutdown already in progress...");
+    return;
+  }
+
+  isShuttingDown = true;
+
   logger.info(`Received ${signal}. Starting graceful shutdown...`);
 
-  server.close(() => {
-    logger.info("HTTP server closed.");
-  });
-
-  setTimeout(() => {
+  const shutdownTimeout = setTimeout(() => {
     logger.warn(
       "Could not close connections in time, forcefully shutting down",
     );
@@ -36,14 +41,19 @@ const gracefulShutdown = async (signal: string) => {
     process.exit(1);
   }, 5000);
 
-  try {
-    await db.$disconnect();
-    logger.info("Database connection closed.");
-    process.exit(0);
-  } catch (error) {
-    logger.error("Error during database disconnection", error);
-    process.exit(1);
-  }
+  server.close(async () => {
+    logger.info("HTTP server closed.");
+    try {
+      await db.$disconnect();
+      logger.info("Database connection closed.");
+      clearTimeout(shutdownTimeout);
+      logger.info("Graceful shutdown completed.");
+      process.exit(0);
+    } catch (error) {
+      logger.error("Error during database disconnection", error);
+      process.exit(1);
+    }
+  });
 };
 
 process.on("SIGINT", () => gracefulShutdown("SIGINT"));
