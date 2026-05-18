@@ -1,6 +1,9 @@
 import * as loanRepository from "../repositories/loan.repository";
 import { generateProjections } from "./projection.service";
-import type { CreateLoanInput } from "../validators/loan.schema";
+import type {
+  CreateLoanInput,
+  UpdateLoanInput,
+} from "../validators/loan.schema";
 import { AppError } from "../errors/AppError";
 
 export const createLoanService = async (
@@ -51,4 +54,44 @@ export const getLoanService = async (loanId: number, userId: number) => {
   }
 
   return loan;
+};
+
+export const getAllLoansService = async (userId: number) => {
+  return await loanRepository.getLoansByUserId(userId);
+};
+
+export const updateLoanService = async (
+  loanId: number,
+  userId: number,
+  data: UpdateLoanInput,
+) => {
+  const existingLoan = await loanRepository.getLoanById(loanId);
+  if (!existingLoan) throw new AppError("LOAN_NOT_FOUND");
+
+  const participant = existingLoan.participants.find(
+    (p) => p.user_id === userId,
+  );
+  if (!participant || participant.role !== "admin") {
+    throw new AppError("ONLY_ADMIN_ALLOWED");
+  }
+
+  return await loanRepository.updateLoan(loanId, {
+    loan_name: data.loan_name,
+    status: data.status,
+  });
+};
+
+export const deleteLoanService = async (loanId: number, userId: number) => {
+  const existingLoan = await loanRepository.getLoanById(loanId);
+  if (!existingLoan) throw new AppError("LOAN_NOT_FOUND");
+
+  const participant = existingLoan.participants.find(
+    (p) => p.user_id === userId,
+  );
+  if (!participant || participant.role !== "admin") {
+    throw new AppError("ONLY_ADMIN_ALLOWED");
+  }
+
+  await loanRepository.deleteLoan(loanId);
+  return { message: "Loan deleted successfully" };
 };

@@ -53,8 +53,8 @@ export const createLoanWithParticipantAndProjections = async (
 };
 
 export const getLoanById = async (id: number) => {
-  return await db.loan.findUnique({
-    where: { id },
+  return await db.loan.findFirst({
+    where: { deleted_at: null, id },
     include: { participants: true },
   });
 };
@@ -62,6 +62,7 @@ export const getLoanById = async (id: number) => {
 export const getLoansByUserId = async (userId: number) => {
   return await db.loan.findMany({
     where: {
+      deleted_at: null,
       participants: {
         some: { user_id: userId },
       },
@@ -80,7 +81,8 @@ export const updateLoan = async (id: number, data: Prisma.LoanUpdateInput) => {
 };
 
 export const deleteLoan = async (id: number) => {
-  return await db.loan.delete({
+  return await db.loan.update({
     where: { id },
+    data: { deleted_at: new Date() },
   });
 };
