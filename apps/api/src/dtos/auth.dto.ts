@@ -1,5 +1,9 @@
 import type { Request } from "express";
-import type { RegisterInput, LoginInput } from "../validators/auth.schema";
+import type {
+  RegisterInput,
+  LoginInput,
+  RefreshInput,
+} from "../validators/auth.schema";
 
 export const registerRequestDTO = (req: Request): RegisterInput => {
   const body = req.body || {};
@@ -17,16 +21,27 @@ export const loginRequestDTO = (req: Request): LoginInput => {
   };
 };
 
+export const refreshRequestDTO = (req: Request): RefreshInput => {
+  const body = req.body || {};
+  return {
+    refreshToken: body.refreshToken,
+  };
+};
+
 export const authResponseDTO = (
   user: { id: number; userName: string },
-  token: string,
+  accessToken: string,
+  refreshToken: string,
 ) => {
   return {
     user: {
       id: user.id,
       userName: user.userName,
     },
-    token,
+    tokens: {
+      accessToken,
+      refreshToken,
+    },
   };
 };
 

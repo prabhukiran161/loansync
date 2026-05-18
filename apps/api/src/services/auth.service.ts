@@ -1,4 +1,8 @@
-import { RegisterInput, LoginInput } from "../validators/auth.schema";
+import {
+  RegisterInput,
+  LoginInput,
+  RefreshInput,
+} from "../validators/auth.schema";
 import * as userRepository from "../repositories/user.repository";
 import { AppError } from "../errors/AppError";
 import { ENV } from "../config/env";
@@ -18,13 +22,12 @@ export const registerService = async (data: RegisterInput) => {
     password: hashedPassword,
   });
 
-  const token = jwt.sign(
-    { userId: newUser.id, userName: newUser.userName },
-    ENV.JWT_SECRET,
-    { expiresIn: "7d" },
-  );
-
-  return { user: newUser, token };
+  const tokens = generateTokens(newUser.id, newUser.userName);
+  return {
+    newUser,
+    accessToken: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
+  };
 };
 
 export const loginService = async (data: LoginInput) => {
@@ -38,13 +41,12 @@ export const loginService = async (data: LoginInput) => {
     throw new AppError("INVALID_CREDENTIALS");
   }
 
-  const token = jwt.sign(
-    { userId: user.id, userName: user.userName },
-    ENV.JWT_SECRET,
-    { expiresIn: "7d" },
-  );
-
-  return { user, token };
+  const tokens = generateTokens(user.id, user.userName);
+  return {
+    user,
+    accessToken: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
+  };
 };
 
 export const getProfileService = async (userId: number) => {
@@ -53,4 +55,35 @@ export const getProfileService = async (userId: number) => {
     throw new AppError("USER_NOT_FOUND");
   }
   return user;
+};
+
+const generateTokens = (userId: number, userName: string) => {
+  const accessToken = jwt.sign({ userId, userName }, ENV.JWT_SECRET, {
+    expiresIn: "15m",
+  });
+  const refreshToken = jwt.sign({ userId, userName }, ENV.JWT_REFRESH_SECRET, {
+    expiresIn: "7d",
+  });
+  return { accessToken, refreshToken };
+};
+
+export const refreshTokensService = async (data: RefreshInput) => {
+  try {
+    const decoded = jwt.verify(data.refreshToken, ENV.JWT_REFRESH_SECRET) as {
+      userId: number;
+      userName: string;
+    };
+
+    const user = await userRepository.findUserById(decoded.userId);
+    if (!user) throw new AppError("USER_NOT_FOUND");
+
+    const tokens = generateTokens(user.id, user.userName);
+    return {
+      user,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+    };
+  } catch (err) {
+    throw new AppError("INVALID_TOKEN");
+  }
 };
