@@ -6,7 +6,7 @@ export const envSchema = z.object({
     .default("development"),
   PORT: z
     .string()
-    .regex(/^\\d+$/, "PORT must be a number")
+    .regex(/^\d+$/, "PORT must be a number")
     .transform(Number)
     .default("4000"),
   JWT_SECRET: z.string().min(1, "JWT_SECRET is required"),
