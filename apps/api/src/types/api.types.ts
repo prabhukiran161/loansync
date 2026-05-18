@@ -1,0 +1,21 @@
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T | null;
+  error: {
+    code: string;
+    message: string;
+    details?: any;
+  } | null;
+}
+
+export const successResponse = <T>(data: T): ApiResponse<T> => {
+  return { success: true, data, error: null };
+};
+
+export const errorResponse = (
+  code: string,
+  message: string,
+  details?: any,
+): ApiResponse<null> => {
+  return { success: false, data: null, error: { code, message, details } };
+};
