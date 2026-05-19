@@ -16,6 +16,7 @@ import {
   getParticipantsController,
   inviteParticipantController,
 } from "../controllers/participant.controller";
+import { getLoanEventsController } from "../controllers/notification.controller";
 
 export const loanRouter = Router();
 
@@ -34,3 +35,5 @@ loanRouter.get("/:loanId/projections", getLoanProjectionsController);
 
 loanRouter.post("/:loanId/transactions", createTransactionController);
 loanRouter.get("/:loanId/transactions", getLoanTransactionsController);
+
+loanRouter.get("/:loanId/events", getLoanEventsController);

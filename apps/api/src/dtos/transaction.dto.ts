@@ -4,6 +4,7 @@ import type {
   CreateTransactionInput,
   UpdateTransactionInput,
 } from "../validators/transaction.schema";
+import type { VerifyTransactionInput } from "../validators/verification.schema";
 
 export const getTransactionParamsDTO = (req: Request) => {
   const transactionId = Number(req.params.transactionId);
@@ -38,5 +39,14 @@ export const updateTransactionRequestDTO = (
       : undefined,
     transaction_date: body.transactionDate,
     notes: body.notes,
+  };
+};
+
+export const verifyTransactionRequestDTO = (
+  req: Request,
+): VerifyTransactionInput => {
+  return {
+    status: req.body.status,
+    remarks: req.body.remarks,
   };
 };
