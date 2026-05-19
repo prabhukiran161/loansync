@@ -9,11 +9,15 @@ import {
 import { authenticate } from "../middlewares/auth.middleware";
 import { getLoanProjectionsController } from "../controllers/projection.controller";
 import {
+  createTransactionController,
+  getLoanTransactionsController,
+} from "../controllers/transaction.controller";
+import {
   getParticipantsController,
   inviteParticipantController,
 } from "../controllers/participant.controller";
 
-const loanRouter = Router();
+export const loanRouter = Router();
 
 loanRouter.use(authenticate);
 
@@ -28,4 +32,5 @@ loanRouter.get("/:loanId/participants", getParticipantsController);
 
 loanRouter.get("/:loanId/projections", getLoanProjectionsController);
 
-export { loanRouter };
+loanRouter.post("/:loanId/transactions", createTransactionController);
+loanRouter.get("/:loanId/transactions", getLoanTransactionsController);
