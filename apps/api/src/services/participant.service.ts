@@ -111,6 +111,16 @@ export const updateParticipantService = async (
     }
 
     if (
+      targetParticipant.id === adminParticipant.id &&
+      data.liability_percentage_bps !== undefined
+    ) {
+      throw new AppError(
+        "INVALID_REQUEST",
+        "You cannot modify your own liability directly. Please update the other participant's liability, and yours will automatically balance.",
+      );
+    }
+
+    if (
       data.liability_percentage_bps === undefined ||
       data.liability_percentage_bps ===
         targetParticipant.liability_percentage_bps
