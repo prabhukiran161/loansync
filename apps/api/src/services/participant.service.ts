@@ -17,11 +17,11 @@ export const inviteParticipantService = async (
   const invitedUserId = data.invited_user_id;
 
   const loan = await loanRepository.getLoanById(loanId);
-  if (!loan) throw new AppError("LOAN_NOT_FOUND");
+  if (!loan) throw new AppError("NOT_FOUND", "Loan not found");
 
   const admin = loan.participants.find((p) => p.user_id === adminUserId);
   if (!admin || admin.role !== "admin") {
-    throw new AppError("ONLY_ADMIN_ALLOWED");
+    throw new AppError("FORBIDDEN", "Only admin can perform this action");
   }
 
   if (adminUserId === invitedUserId) {
@@ -34,7 +34,7 @@ export const inviteParticipantService = async (
       invitedUserId,
     );
   if (existingParticipant) {
-    throw new AppError("USER_LOAN_EXISTS");
+    throw new AppError("CONFLICT", "User is already in the loan");
   }
 
   const existingInvite = await db.loanInvitation.findUnique({
@@ -46,7 +46,10 @@ export const inviteParticipantService = async (
     },
   });
   if (existingInvite) {
-    throw new AppError("INVITATION_EXISTS");
+    throw new AppError(
+      "CONFLICT",
+      "An invitation has already been sent to this user for this loan",
+    );
   }
 
   return await participantRepository.createInvitation({
@@ -67,7 +70,7 @@ export const respondToInvitationService = async (
   status: "accepted" | "rejected",
 ) => {
   const invite = await participantRepository.getInvitationById(invitationId);
-  if (!invite) throw new AppError("INVITATION_NOT_FOUND");
+  if (!invite) throw new AppError("NOT_FOUND", "Invitation not found");
   if (invite.invited_user_id !== userId) throw new AppError("FORBIDDEN");
   if (invite.status !== "pending") throw new AppError("INVALID_REQUEST");
 
@@ -104,7 +107,7 @@ export const updateParticipantService = async (
     });
 
     if (!adminParticipant || adminParticipant.role !== "admin") {
-      throw new AppError("ONLY_ADMIN_ALLOWED");
+      throw new AppError("FORBIDDEN", "Only admin can perform this action");
     }
 
     if (
@@ -126,7 +129,10 @@ export const updateParticipantService = async (
     const newAdminBps = adminParticipant.liability_percentage_bps - deltaBps;
 
     if (newAdminBps < 0) {
-      throw new AppError("INVALID_LIABILITY_DISTRIBUTION");
+      throw new AppError(
+        "INVALID_REQUEST",
+        "Admin does not have enough liability share to transfer",
+      );
     }
 
     const targetNewBalance =

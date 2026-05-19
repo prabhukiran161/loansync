@@ -4,9 +4,10 @@ export class AppError extends Error {
   code: ErrorCode;
   statusCode: number;
   isOperational: boolean;
-  constructor(code: ErrorCode) {
+  constructor(code: ErrorCode, message?: string) {
     const errorConfig = ERROR_CODES[code] || ERROR_CODES.INTERNAL_SERVER_ERROR;
-    super(errorConfig.message);
+    const finalMessage = message ? message : errorConfig.message;
+    super(finalMessage);
     this.code = code;
     this.statusCode = errorConfig.statusCode;
     this.isOperational = true;

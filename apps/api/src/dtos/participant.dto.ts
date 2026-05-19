@@ -28,7 +28,7 @@ export const invitationResponseDTO = (invitation: any) => {
 export const getLoanParamsDTO = (req: Request) => {
   const loanId = Number(req.params.loanId);
   if (isNaN(loanId) || loanId <= 0) {
-    throw new AppError("INVALID_REQUEST");
+    throw new AppError("INVALID_REQUEST", "Invalid loan ID in the URL");
   }
   return { loanId };
 };
@@ -36,7 +36,7 @@ export const getLoanParamsDTO = (req: Request) => {
 export const getInvitationParamsDTO = (req: Request) => {
   const invitationId = Number(req.params.invitationId);
   if (isNaN(invitationId) || invitationId <= 0) {
-    throw new AppError("INVALID_REQUEST");
+    throw new AppError("INVALID_REQUEST", "Invalid Invitation ID in the URL");
   }
   return { invitationId };
 };

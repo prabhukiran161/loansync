@@ -11,7 +11,6 @@ export const errorHandler = (
   res: Response,
   next: NextFunction,
 ) => {
-  // 1. Handle strict Zod validation errors seamlessly
   if (err instanceof ZodError) {
     const details = err.errors.map((e) => ({
       field: e.path.join("."),
@@ -23,7 +22,6 @@ export const errorHandler = (
       .json(errorResponse("INVALID_REQUEST", "Invalid request data", details));
   }
 
-  // 2. Handle expected AppErrors securely
   if (err instanceof AppError) {
     logger.warn(`AppError: ${err.code} - ${err.message}`);
     return res
@@ -31,7 +29,6 @@ export const errorHandler = (
       .json(errorResponse(err.code, err.message));
   }
 
-  // 3. Handle unexpected system crashes
   logger.error("Unhandled Exception:", err);
   const message =
     ENV.NODE_ENV === "production" ? "Internal Server Error" : err.message;

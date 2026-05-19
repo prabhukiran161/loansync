@@ -12,7 +12,7 @@ import jwt from "jsonwebtoken";
 export const registerService = async (data: RegisterInput) => {
   const existingUser = await userRepository.findUserByUserName(data.userName);
   if (existingUser) {
-    throw new AppError("USER_EXISTS");
+    throw new AppError("CONFLICT", "Username already registered");
   }
 
   const hashedPassword = await bcrypt.hash(data.password, 10);
@@ -33,12 +33,12 @@ export const registerService = async (data: RegisterInput) => {
 export const loginService = async (data: LoginInput) => {
   const user = await userRepository.findUserByUserName(data.userName);
   if (!user) {
-    throw new AppError("INVALID_CREDENTIALS");
+    throw new AppError("UNAUTHORIZED", "Invalid username or password");
   }
 
   const isValidPassword = await bcrypt.compare(data.password, user.password);
   if (!isValidPassword) {
-    throw new AppError("INVALID_CREDENTIALS");
+    throw new AppError("UNAUTHORIZED", "Invalid username or password");
   }
 
   const tokens = generateTokens(user.id, user.userName);
@@ -52,7 +52,7 @@ export const loginService = async (data: LoginInput) => {
 export const getProfileService = async (userId: number) => {
   const user = await userRepository.findUserById(userId);
   if (!user) {
-    throw new AppError("USER_NOT_FOUND");
+    throw new AppError("NOT_FOUND", "User not found");
   }
   return user;
 };
@@ -75,7 +75,7 @@ export const refreshTokensService = async (data: RefreshInput) => {
     };
 
     const user = await userRepository.findUserById(decoded.userId);
-    if (!user) throw new AppError("USER_NOT_FOUND");
+    if (!user) throw new AppError("NOT_FOUND", "User not found");
 
     const tokens = generateTokens(user.id, user.userName);
     return {
@@ -84,6 +84,6 @@ export const refreshTokensService = async (data: RefreshInput) => {
       refreshToken: tokens.refreshToken,
     };
   } catch (err) {
-    throw new AppError("INVALID_TOKEN");
+    throw new AppError("UNAUTHORIZED", "Invalid authentication token");
   }
 };

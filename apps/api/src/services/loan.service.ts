@@ -45,12 +45,12 @@ export const createLoanService = async (
 export const getLoanService = async (loanId: number, userId: number) => {
   const loan = await loanRepository.getLoanById(loanId);
   if (!loan) {
-    throw new AppError("LOAN_NOT_FOUND");
+    throw new AppError("NOT_FOUND", "Loan not found");
   }
 
   const isParticipant = loan.participants.some((p) => p.user_id === userId);
   if (!isParticipant) {
-    throw new AppError("FORBIDDEN");
+    throw new AppError("FORBIDDEN", "You are not a participant in this loan");
   }
 
   return loan;
@@ -66,13 +66,13 @@ export const updateLoanService = async (
   data: UpdateLoanInput,
 ) => {
   const existingLoan = await loanRepository.getLoanById(loanId);
-  if (!existingLoan) throw new AppError("LOAN_NOT_FOUND");
+  if (!existingLoan) throw new AppError("NOT_FOUND", "Loan not found");
 
   const participant = existingLoan.participants.find(
     (p) => p.user_id === userId,
   );
   if (!participant || participant.role !== "admin") {
-    throw new AppError("ONLY_ADMIN_ALLOWED");
+    throw new AppError("FORBIDDEN", "Only admin can perform this action");
   }
 
   return await loanRepository.updateLoan(loanId, {
@@ -83,13 +83,13 @@ export const updateLoanService = async (
 
 export const deleteLoanService = async (loanId: number, userId: number) => {
   const existingLoan = await loanRepository.getLoanById(loanId);
-  if (!existingLoan) throw new AppError("LOAN_NOT_FOUND");
+  if (!existingLoan) throw new AppError("NOT_FOUND", "Loan not found");
 
   const participant = existingLoan.participants.find(
     (p) => p.user_id === userId,
   );
   if (!participant || participant.role !== "admin") {
-    throw new AppError("ONLY_ADMIN_ALLOWED");
+    throw new AppError("FORBIDDEN", "Only admin can perform this action");
   }
 
   await loanRepository.deleteLoan(loanId);

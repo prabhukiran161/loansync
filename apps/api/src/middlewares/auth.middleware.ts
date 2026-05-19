@@ -21,7 +21,9 @@ export const authenticate = (
 ) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return next(new AppError("UNAUTHORIZED"));
+    return next(
+      new AppError("UNAUTHORIZED", "Authentication token is missing"),
+    );
   }
 
   const token = authHeader.split(" ")[1];
@@ -33,6 +35,8 @@ export const authenticate = (
     req.user = decoded;
     next();
   } catch (err) {
-    next(new AppError("INVALID_TOKEN"));
+    next(
+      new AppError("UNAUTHORIZED", "Invalid or expired authentication token"),
+    );
   }
 };
