@@ -41,9 +41,13 @@ export const getInvitationParamsDTO = (req: Request) => {
   return { invitationId };
 };
 
-export const getParticipantParamsDTO = (req: Request) => ({
-  participantId: Number(req.params.participantId),
-});
+export const getParticipantParamsDTO = (req: Request) => {
+  const participantId = Number(req.params.participantId);
+  if (isNaN(participantId) || participantId <= 0) {
+    throw new AppError("INVALID_REQUEST", "Invalid Participant ID in the URL");
+  }
+  return { participantId };
+};
 
 export const respondInvitationRequestDTO = (
   req: Request,

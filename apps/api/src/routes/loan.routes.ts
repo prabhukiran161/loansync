@@ -7,6 +7,7 @@ import {
   deleteLoanController,
 } from "../controllers/loan.controller";
 import { authenticate } from "../middlewares/auth.middleware";
+import { getLoanProjectionsController } from "../controllers/projection.controller";
 import {
   getParticipantsController,
   inviteParticipantController,
@@ -24,5 +25,7 @@ loanRouter.delete("/:id", deleteLoanController);
 
 loanRouter.post("/:loanId/invitations", inviteParticipantController);
 loanRouter.get("/:loanId/participants", getParticipantsController);
+
+loanRouter.get("/:loanId/projections", getLoanProjectionsController);
 
 export { loanRouter };
